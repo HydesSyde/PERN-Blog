@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <section className="navbar">
       <div className="flex w-1/2 items-center justify-between md:justify-start">
-        <Link to="/">
+        <Link to="">
           <img src={logo} alt="blog-logo" className="w-10 h-10 md:mr-10" />
         </Link>
 
@@ -40,7 +40,7 @@ const Navbar = () => {
           </li>
           <li className="">
             <Link to={"/sign-up"}>
-              <button className="btn-light hidden md:flex">Sign-in</button>
+              <button className="btn-light hidden md:flex">Sign-up</button>
             </Link>
           </li>
         </ul>
