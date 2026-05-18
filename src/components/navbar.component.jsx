@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useContext } from "react";
 import logo from "../imgs/logo.png";
 import glass from "../icons/glass.png";
 import content from "../icons/content.png";
-import { useContext } from "react";
 
 const Navbar = () => {
   //check for user sign in from use auth, then assign it to user
@@ -12,7 +13,13 @@ const Navbar = () => {
   const user = true;
 
   return (
-    <section className="navbar">
+    <motion.section
+      initial={{ y: 40, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ opacity: 0, y: -40 }}
+      transition={{ duration: 0.4 }}
+      className="navbar"
+    >
       <div className="flex w-1/2 items-center justify-between md:justify-start">
         <Link to="">
           <img src={logo} alt="blog-logo" className="w-10 h-10 md:mr-10" />
@@ -45,7 +52,7 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
