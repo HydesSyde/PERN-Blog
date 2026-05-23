@@ -1,10 +1,12 @@
-import Navbar from "../components/navbar.component";
 import { Link, Outlet } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 import email from "../icons/email.png";
 import hide from "../icons/hide.png";
 import key from "../icons/key.png";
 import people from "../icons/people.png";
-import { useState } from "react";
+import Navbar from "../components/navbar.component";
+import Toast from "../components/toast";
 
 const UserAuthForm = ({ type }) => {
   const [formData, setFormData] = useState({
@@ -12,11 +14,12 @@ const UserAuthForm = ({ type }) => {
     email: "",
     password: "",
   });
-
+  const [toast, setToast] = useState(null);
+  const [toastType, setToastType] = useState(false);
   const [active, setActive] = useState(true);
 
   const triggerActive = () => {
-    setActive(!active);
+    setActive((prev) => !prev);
   };
 
   const handleChange = (e) => {
@@ -26,19 +29,46 @@ const UserAuthForm = ({ type }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    if (!formData.email || !formData.password) {
+      setToast("Please fill all field");
+      setToastType(false);
+      console.log(toast, toastType, "Toast rendering");
+      return;
+    }
+
+    try {
+      setToast(
+        type === "sign-in"
+          ? "Log in successful"
+          : "Account Created succesfully",
+      );
+      setToastType(true);
+    } catch (error) {
+      console.log(error);
+      setToast("User Auth failed");
+      setToastType(false);
+      console.log(toast, toastType);
+    }
   };
 
   return (
     <>
+      {/* Notification message with toast */}
+      {toast && (
+        <Toast
+          message={toast}
+          type={toastType}
+          onClose={() => setToast(null)}
+        />
+      )}
       <Navbar />
-      <div className="h-cover font-gelasio flex flex-col items-center justify-center bg-white">
+      <div className="min-h-screen font-gelasio flex flex-col items-center justify-center bg-white">
         <Outlet />
         {type === "sign-in" ? (
-          <section className="h-cover flex flex-col items-center justify-center">
+          <section className="min-h-screen flex flex-col items-center justify-center">
             <h1 className="text-3xl">Welcome Back</h1>
             <form onSubmit={handleSubmit}>
               <img src={email} className="w-5 h-5 relative left-3 top-9" />
@@ -51,7 +81,7 @@ const UserAuthForm = ({ type }) => {
                 onChange={handleChange}
               />
               <img src={key} className="w-5 h-5 relative left-3 top-9 z-10" />
-              <div className="absolute flex fle-row">
+              <div className="absolute flex flex-row">
                 <input
                   className="input-box placeholder:text-dark-grey mb-4"
                   type={active ? "password" : "text"}
@@ -76,7 +106,7 @@ const UserAuthForm = ({ type }) => {
             </form>
           </section>
         ) : (
-          <section className="h-cover flex flex-col items-center justify-center">
+          <section className="min-h-screen flex flex-col items-center justify-center">
             <h1 className="text-3xl">Join Us Today</h1>
             <form onSubmit={handleSubmit}>
               <img src={people} className="w-5 h-5 relative left-3 top-9" />
@@ -94,7 +124,7 @@ const UserAuthForm = ({ type }) => {
                 type="email"
                 value={formData.email}
                 name="email"
-                placeholder="example@gmail.com"
+                placeholder="example"
                 onChange={handleChange}
               />
               <img src={key} className="w-5 h-5 relative left-3 top-9 z-10" />
