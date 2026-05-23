@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import email from "../icons/email.png";
@@ -9,6 +9,7 @@ import Navbar from "../components/navbar.component";
 import Toast from "../components/toast";
 
 const UserAuthForm = ({ type }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -32,6 +33,7 @@ const UserAuthForm = ({ type }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //error check for data form
     if (!formData.email || !formData.password) {
       setToast("Please fill all field");
       setToastType(false);
@@ -39,13 +41,32 @@ const UserAuthForm = ({ type }) => {
       return;
     }
 
+    //inputting api route
+    const API_BASE = import.meta.env.VITE_API_URL;
+
+    if (!API_BASE) {
+      throw new Error("API BASE does not exist");
+    }
+
+    const endpoint = type === "sign-in" ? "/sign-in" : "/sign-up";
+
     try {
+      //getting response
+      const response = await axios.post(`${API_BASE}${endpoint}`, formData, {
+        timeout: 5000,
+      });
+
+      console.log(response.data);
+
       setToast(
         type === "sign-in"
           ? "Log in successful"
           : "Account Created succesfully",
       );
       setToastType(true);
+      setTimeout(() => {
+        navigate("/editor");
+      }, 1500);
     } catch (error) {
       console.log(error);
       setToast("User Auth failed");
