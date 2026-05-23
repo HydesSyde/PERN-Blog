@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import email from "../icons/email.png";
 import hide from "../icons/hide.png";
@@ -7,6 +7,8 @@ import key from "../icons/key.png";
 import people from "../icons/people.png";
 import Navbar from "../components/navbar.component";
 import Toast from "../components/toast";
+import { UserContext } from "../context/useContext";
+import { storeInSession } from "../common/session";
 
 const UserAuthForm = ({ type }) => {
   const navigate = useNavigate();
@@ -19,6 +21,8 @@ const UserAuthForm = ({ type }) => {
   const [toastType, setToastType] = useState(false);
   const [active, setActive] = useState(true);
 
+  //storing user auth
+  const { setUserAuth } = useContext(UserContext);
   const triggerActive = () => {
     setActive((prev) => !prev);
   };
@@ -57,13 +61,19 @@ const UserAuthForm = ({ type }) => {
       });
 
       console.log(response.data);
+      const userData = response.data;
+
+      storeInSession("user", userData);
+      setUserAuth(userData);
 
       setToast(
         type === "sign-in"
           ? "Log in successful"
           : "Account Created succesfully",
       );
+      //if login is successfull, nofitication should be successful
       setToastType(true);
+
       setTimeout(() => {
         navigate("/editor");
       }, 1500);
